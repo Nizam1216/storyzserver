@@ -19,5 +19,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`server listening at ${process.env.DEVMODE}:${PORT}`.bgRed.white);
+  console.log(`server listening at http://localhost:${PORT}`.bgRed.white);
 });
