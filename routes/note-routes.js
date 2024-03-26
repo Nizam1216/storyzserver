@@ -7,6 +7,7 @@ const {
   deleteNoteControllers,
   populateNotesControllers,
   ReadNoteControllers,
+  addCommentController,
 } = require("../controllers/noteControllers");
 const router = express.Router();
 
@@ -16,4 +17,5 @@ router.post("/addnote", fetchUser, addNoteControllers);
 router.put("/updatenote/:id", fetchUser, updateNoteControllers);
 router.delete("/deletenote/:id", fetchUser, deleteNoteControllers);
 router.post("/readnote/:id", ReadNoteControllers);
+router.post("/addcomment/:id", addCommentController);
 module.exports = router;

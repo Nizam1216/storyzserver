@@ -70,7 +70,7 @@ exports.loginController = async (req, res) => {
       },
     };
     const authToken = jwt.sign(data, jwt_secret);
-    res.status(200).json({ authToken: authToken });
+    res.status(200).json({ authToken: authToken, email: email });
   } catch (error) {
     console.log(error);
     res.status(500).send("Internal Server Error");
