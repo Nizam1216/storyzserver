@@ -9,12 +9,23 @@ const commentSchema = new mongoose.Schema({
     required: true,
   },
 });
+const chapterSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  story: {
+    type: String,
+    required: true,
+  },
+});
+
 const noteSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "users",
   },
-  name: {
+  title: {
     type: String,
     required: true,
   },
@@ -22,10 +33,7 @@ const noteSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  description: {
-    type: String,
-    required: true,
-  },
+
   tag: {
     type: String,
     default: "General",
@@ -39,6 +47,10 @@ const noteSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  image: {
+    type: String, // Store the base64 image as a string
+  },
+  chapters: [chapterSchema],
   comments: [commentSchema],
 });
 

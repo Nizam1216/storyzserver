@@ -1,5 +1,41 @@
 const notesModel = require("../models/Notes");
 const userModel = require("../models/Users");
+const multer = require("multer");
+
+// Multer upload configuration
+const storage = multer.memoryStorage(); // Store files in memory
+const upload = multer({ storage: storage });
+
+exports.addNoteControllers = async (req, res) => {
+  try {
+    const { title, tag, chapters, image } = req.body;
+
+    // Fetch user details to get the email
+    const user = await userModel.findById(req.user.id);
+    if (!user) {
+      return res.status(404).send({ error: "User not found" });
+    }
+
+    // Create new note object
+    const note = new notesModel({
+      title,
+      tag,
+      user: req.user.id,
+      userEmail: user.email,
+      image, // Save base64 image data directly
+      chapters,
+    });
+
+    // Save the note
+    await note.save();
+
+    res.send(note);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
 exports.allNotesControllers = async (req, res) => {
   try {
     const allnotes = await notesModel
@@ -20,58 +56,38 @@ exports.populateNotesControllers = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-exports.addNoteControllers = async (req, res) => {
-  try {
-    const { name, description, tag } = req.body;
-    // Fetch user details to get the email
-    const user = await userModel.findById(req.user.id);
-    if (!user) {
-      return res.status(404).send({ error: "User not found" });
-    }
-    const note = new notesModel({
-      name,
-      description,
-      tag,
-      user: req.user.id,
-      userEmail: user.email,
-    });
-    await note.save();
-    res.send(note);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send("Internal Server Error");
-  }
-};
 
 exports.updateNoteControllers = async (req, res) => {
   try {
-    const { name, description, tag } = req.body;
+    const { title, chapters, tag } = req.body;
     const id = req.params.id;
 
-    const newNote = {};
-    if (name) {
-      newNote.name = name;
+    const updatedNote = {};
+    if (title) {
+      updatedNote.title = title;
     }
-    if (description) {
-      newNote.description = description;
+    if (chapters) {
+      updatedNote.chapters = chapters;
     }
     if (tag) {
-      newNote.tag = tag;
+      updatedNote.tag = tag;
     }
 
     let note = await notesModel.findById(id);
     if (!note) {
-      return res.status(401).send({ error: "no note found" });
+      return res.status(404).send({ error: "Note not found" });
     }
 
     if (note.user.toString() !== req.user.id) {
-      return res.status(401).send({ error: "unotherised user" });
+      return res.status(401).send({ error: "Unauthorized user" });
     }
+
     note = await notesModel.findByIdAndUpdate(
-      note,
-      { $set: newNote },
+      id,
+      { $set: updatedNote },
       { new: true }
     );
+
     res.send(note);
   } catch (error) {
     console.log(error);
