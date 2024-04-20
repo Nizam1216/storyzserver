@@ -7,7 +7,7 @@ const userRoutes = require("./routes/user-routes");
 const notesRoutes = require("./routes/note-routes");
 const bodyParser = require("body-parser");
 const app = express();
-app.use(cors());
+app.use(cors({ origin: "*" }));
 // Increase the maximum request size limit to handle larger file uploads
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
